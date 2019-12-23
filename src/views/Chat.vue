@@ -73,7 +73,7 @@ export default {
                 url: "measure/details?token="+localStorage.getItem("token"),
                 method: "POST",
                 data: {
-                    send_id: this.targetId,
+                    sendId: this.targetId,
                 }
             }).then((res)=>{
                 var list = res.data.data
@@ -93,7 +93,7 @@ export default {
                 url: "measure/send?token="+localStorage.getItem("token"),
                 method: "POST",
                 data: {
-                    target_id: this.targetId,
+                    targetId: this.targetId,
                     content: this.text
                 }
             }).then((res)=>{

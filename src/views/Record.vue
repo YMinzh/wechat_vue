@@ -1,5 +1,6 @@
 <template>
     <div class="Record van-clearfix" >
+        <Top left="返回" @forback="goBack"></Top>
         <van-list class="van-clearfix" id="list-content"
         v-model="loading"
         :finished="finished"
@@ -15,9 +16,12 @@
 
 <script>
 import axios from 'axios'
+import Top from '@/components/Top.vue'
 
 export default {
- 
+    components: {
+        Top
+    },
     data(){
         return {
             sendId: 0,
@@ -70,7 +74,6 @@ export default {
                 }
                 this.loading = false
                 
-                console.log(this.currentPage,this.rows)
             })
         },
         getUser(){

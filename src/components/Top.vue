@@ -1,6 +1,6 @@
 <template>
     <div class="top">
-        <div class="left iconfont"><span v-html="leftIconfont" @click="goBack"></span><span>{{left}}</span></div>
+        <div class="left iconfont" @click="callback"><span v-html="leftIconfont" @click="goBack"></span><span>{{left}}</span></div>
         <div class="right">
             <i class="iconfont" v-for="(item, index) in right" :key="index" v-html="item" @click="callback"></i>
         </div>
@@ -20,7 +20,7 @@ export default {
             this.$router.push("/");
         },
         callback(){
-            this.$emit("for")
+            this.$emit("forback")
         }
     }
 

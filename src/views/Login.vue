@@ -38,7 +38,7 @@ export default {
                 url: "/login",
                 data: {
                     username : this.username,
-                    password_hash : this.password
+                    passwordHash : this.password
                 }
             }).then((res)=>{
                 if(res.data.code == 0){
