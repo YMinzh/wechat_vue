@@ -6,7 +6,7 @@
                     <div class="uLeft"><span>{{msg.username}}</span></div>
                     <div class="uRight"><span>{{msg.time}}</span></div>
                 </div>
-                <div class="down"><span>{{msg.username}} : {{msg.content}}</span></div>
+                <div class="down"><span>{{msg.content}}</span></div>
             </div>
         </li>
 </template>
@@ -17,7 +17,7 @@ export default {
     methods: {
         goChat(){
             console.log(1)
-            this.$emit("goChat",{img: this.msg.img,username: this.msg.username})
+            this.$emit("goChat",{img: this.msg.img,targetId: this.msg.targetId})
         }
     }
 }

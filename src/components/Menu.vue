@@ -1,5 +1,5 @@
 <template>
-    <li class="list">
+    <li class="list" @click="go">
         <div class="left"><img :src="msg.img" alt=""></div>
         <div class="right"><span>{{msg.text}}</span><i class="iconfont" v-html="msg.iconfont"></i></div>
     </li>
@@ -11,7 +11,12 @@
 export default {
     props: [
         "msg",
-    ]
+    ],
+    methods: {
+        go(){
+            this.$router.push("chat?targetId="+this.msg.id)
+        }
+    },
 }
 </script>
 

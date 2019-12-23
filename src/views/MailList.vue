@@ -11,6 +11,7 @@
 import Top from '@/components/Top.vue'
 import Foot from '@/components/Foot.vue'
 import MenuPage from '@/components/MenuPage.vue'
+import axios from "axios"
 // import { access } from 'fs'
 
 export default {
@@ -31,28 +32,32 @@ export default {
 
         ],
         [
-          {img: "../img/touxiang.jpeg",iconfont:' ',text: "AA静静",},
-          {img: "../img/touxiang.jpeg",iconfont:' ',text: "AA雅虎",},
-          {img: "../img/touxiang.jpeg",iconfont:' ',text: "安琪",},
+      
 
         ],
-        [
-          {img: "../img/touxiang.jpeg",iconfont:' ',text: "BA静静",},
-          {img: "../img/touxiang.jpeg",iconfont:' ',text: "BA雅虎",},
-          {img: "../img/touxiang.jpeg",iconfont:' ',text: "波琪",},
 
-        ],
 
       ],
-      division :["null","A","B"]
-
-      
+      division :["null",""]
     }
   },
+  mounted(){
+    axios.request({
+      baseURL: "http://localhost:8081/",
+      url: "/friend?token="+localStorage.getItem("token"),
+      methods: "get",
+    }).then((res)=>{
+      var list = res.data.data
+      for(var i in list){
+        var item = {img: list[i].avatar, iconfont:' ',text: list[i].nickname, id: list[i].friend_id}
+        this.dataList[1].push(item)
+      }
+    })
+  }
  
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
   @import '../assets/sass/color.scss';
   @import '../assets/sass/function.scss';
   .MailList{

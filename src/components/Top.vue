@@ -2,7 +2,7 @@
     <div class="top">
         <div class="left iconfont"><span v-html="leftIconfont" @click="goBack"></span><span>{{left}}</span></div>
         <div class="right">
-            <i class="iconfont" v-for="(item, index) in right" :key="index" v-html="item"></i>
+            <i class="iconfont" v-for="(item, index) in right" :key="index" v-html="item" @click="callback"></i>
         </div>
     </div>
 </template>
@@ -16,7 +16,11 @@ export default {
     ],
     methods: {
         goBack(){
+            this.$emit("callback")
             this.$router.push("/");
+        },
+        callback(){
+            this.$emit("for")
         }
     }
 
@@ -34,6 +38,7 @@ export default {
         background-color: $page-color;
         padding-top: 27px;
         height: 44px;
+        padding-bottom: 20px;
         @include flex;
         .left{
             font-size: 1rem;

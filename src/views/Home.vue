@@ -11,6 +11,7 @@
 import Top from '@/components/Top.vue'
 import Foot from '@/components/Foot.vue'
 import MsgBox from '@/components/MsgBox.vue'
+import axios from 'axios'
 
 export default {
   components: {
@@ -22,17 +23,7 @@ export default {
       topLeft :  "微信",
       active : 0,
       msgs : [
-        {username:"张三" , img:"../img/touxiang.jpeg",content: "你好呀啊哈哈哈哈",time: "11.11"},
-        {username:"李四" , img:"../img/touxiang2.jpeg",content: "你好呀",time: "11.11"},
-        {username:"王五" , img:"../img/touxiang3.jpeg",content: "肯定就疯狂点击付款贷款及罚款的骄傲",time: "11.11"},
-        {username:"王五" , img:"../img/touxiang.jpeg",content: "肯定就疯狂点击付款贷款及罚款的骄傲",time: "11.11"},
-        {username:"王五" , img:"../img/touxiang.jpeg",content: "肯定就疯狂点击付款贷款及罚款的骄傲",time: "11.11"},
-        {username:"王五" , img:"../img/touxiang.jpeg",content: "肯定就疯狂点击付款贷款及罚款的骄傲",time: "11.11"},
-        {username:"王五" , img:"../img/touxiang.jpeg",content: "肯定就疯狂点击付款贷款及罚款的骄傲",time: "11.11"},
-        {username:"王五" , img:"../img/touxiang.jpeg",content: "肯定就疯狂点击付款贷款及罚款的骄傲",time: "11.11"},
-        {username:"王五" , img:"../img/touxiang.jpeg",content: "肯定就疯狂点击付款贷款及罚款的骄傲",time: "11.11"},
-        {username:"王五" , img:"../img/touxiang.jpeg",content: "肯定就疯狂点击付款贷款及罚款的骄傲",time: "11.11"},
-        {username:"王五" , img:"../img/touxiang.jpeg",content: "肯定就疯狂点击付款贷款及罚款的骄傲",time: "11.11"},
+ 
       ]
     }
   },
@@ -40,8 +31,32 @@ export default {
     goChat(val){
       this.$router.push({path: "/chat",query: val})
       console.log(this.$router)
+    },
+    getUnreadList(){
+      axios.request({
+        baseURL: "http://localhost:8081/",
+        url: 'measure/unread?token='+localStorage.getItem("token"),
+        methods: 'get', 
+      }).then((res)=>{
+        if(res.data.code!=0){
+          this.$router.push("/login")
+        }
+        
+        var list = res.data.data
+        for(var i in list){
+          var newTime = list[i].latest_time.split(".")[0]
+          var item = {username: list[i].nickname, img: list[i].avatar, content : list[i].count+"条未读消息", time: newTime, targetId : list[i].send_id}
+          this.msgs.push(item)
+        }
+        console.log(this.msgs)
+      })
     }
-  }
+  },
+
+  mounted(){
+    this.getUnreadList()
+  },
+  
 }
 </script>
 <style lang="scss" scoped>

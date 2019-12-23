@@ -4,12 +4,12 @@
       <div class="up"><i class="iconfont">&#xe620;</i></div>
             <div class="mid">
                 <div class="left">
-                    <img src="../assets/img/touxiang.jpeg" alt="">
+                    <img :src="avatar" alt="">
                 </div>
                 <div class="right">
-                    <div class="rUp"><span>Y-Minzh</span></div>
+                    <div class="rUp"><span>{{nickname}}</span></div>
                     <div class="rDown">
-                        <div class="id"><span>微信号:YYYMiznh</span></div>
+                        <div class="id"><span>微信号:{{username}}</span></div>
                         <div class="qr">
                             <i class="iconfont">&#xe646;</i>
                             <i class="iconfont">&#xe635;</i>
@@ -27,6 +27,7 @@
 // @ is an alias to /src
 import Foot from '@/components/Foot.vue'
 import MenuPage from '@/components/MenuPage.vue'
+import axios from 'axios'
 
 export default {
   components: {
@@ -34,6 +35,9 @@ export default {
   },
   data(){
     return {
+      nickname:'',
+      username: '',
+      avatar: '',
       active : 3,
       dataList :[
         [
@@ -53,6 +57,17 @@ export default {
       
     
     }
+  },
+  mounted(){
+    axios.request({
+      baseURL: "http://localhost:8081",
+      url: "user/get?token="+localStorage.getItem("token"),
+      methods: "get"
+    }).then((res)=>{
+      this.nickname = res.data.data.nickname
+      this.avatar = res.data.data.avatar
+      this.username = res.data.data.username
+    })
   }
 }
 </script>

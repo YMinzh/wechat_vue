@@ -1,12 +1,13 @@
 <template>
     <div class="Chat">
-        <Top :left="left" :right="right" :leftIconfont="zuo"></Top>
-        <ChatPage :allMsg="allMsg"></ChatPage>
+        <Top @callback="stop" :left="left" :right="right" :leftIconfont="zuo"></Top>
+        <ChatPage :allMsg="allMsg" :targetId="targetId" @clean="stop"></ChatPage>
          <div class="foot">
             <i class="iconfont">&#xe7b2;</i>
-            <input type="text" class="text">
+            <input type="text" v-model="text" class="text">
             <i class="iconfont">&#xe60b;</i>
-            <i class="iconfont">&#xe627;</i>
+            <i v-show="!flag" class="iconfont">&#xe627;</i>
+            <b-button @click="send" v-show="flag" variant="success">发送</b-button>
         </div>
     </div>
     
@@ -14,6 +15,8 @@
 <script>
 import Top from '@/components/Top.vue'
 import ChatPage from '@/components/ChatPage.vue'
+import axios from 'axios'
+import { timeout } from 'q'
 
 export default {
     components:{
@@ -24,31 +27,99 @@ export default {
             right: [" ","&#xe618;"],
             left: "名字",
             zuo : "&#xe670;",
-
+            targetId: 0,
+            hisImg: "",
+            selfImg: "",
+            text: "",
+            flag: false,
             allMsg :[
                 {
-                    time: "11.11",
+                    time: "",
                     msg: [
-                        {hisImg: "",selfImg: "../img/touxiang.jpeg" ,measure: "你好呀",active: "1"},
-                        {hisImg: "",selfImg: "../img/touxiang.jpeg" ,measure: "你好呀",active: "2"},
-                        {hisImg: "",selfImg: "../img/touxiang.jpeg" ,measure: "你好呀",active: "2"},
-                        {hisImg: "",selfImg: "../img/touxiang.jpeg" ,measure: "你好呀",active: "2"},
-                        {hisImg: "",selfImg: "../img/touxiang.jpeg" ,measure: "你好呀",active: "2"},
-                        {hisImg: "",selfImg: "../img/touxiang.jpeg" ,measure: "你好呀",active: "2"},
-                        {hisImg: "",selfImg: "../img/touxiang.jpeg" ,measure: "你好呀",active: "2"},
-                        {hisImg: "",selfImg: "../img/touxiang.jpeg" ,measure: "你好呀",active: "2"},
+                        // {hisImg: "",selfImg: "../img/touxiang.jpeg" ,measure: "你好呀",active: "1"},
+
                     ]
                 },
-            ]
+            ],
+            ti:null
 
             
         }
     },
+    methods: {
+        getUser(){
+            axios.request({
+                baseURL: "http://localhost:8081/",
+                url: "user/get?token="+localStorage.getItem("token"),
+                method: "get",
+                params: {
+                    id: this.targetId
+                }
+            }).then((res)=>{
+                if(res.data.code==0){
+                    this.hisImg = res.data.data[1].avatar
+                    this.selfImg = res.data.data[0].avatar
+                    this.left = res.data.data[1].nickname
+                    this.request();
+                }else{
+                    console.log(res.data.data)
+                }
+            })
+        },
+
+        request(){
+            axios.request({
+                baseURL: "http://localhost:8081/",
+                url: "measure/details?token="+localStorage.getItem("token"),
+                method: "POST",
+                data: {
+                    send_id: this.targetId,
+                }
+            }).then((res)=>{
+                var list = res.data.data
+                for(var i in list){
+                    var item = {hisImg: this.hisImg, selfImg: this.selfImg, measure: list[i].content, active: "1"}
+                    this.allMsg[0].msg.push(item)
+                }
+                this.$forceUpdate()
+                console.log(this.allMsg[0].msg.length)
+            })
+        },
+        send(){
+            this.allMsg[0].msg.push({hisImg: this.hisImg, selfImg: this.selfImg, measure: this.text, active: "2"})
+            console.log(this.targetId)
+            axios.request({
+                baseURL: "http://localhost:8081/",
+                url: "measure/send?token="+localStorage.getItem("token"),
+                method: "POST",
+                data: {
+                    target_id: this.targetId,
+                    content: this.text
+                }
+            }).then((res)=>{
+                this.text = ""
+                console.log(res);
+            })
+        },
+        stop(){
+            clearInterval(this.ti)
+        },
+        record(){
+            this.$router.push("record",{sendId: targetId})
+        }
+    },
     mounted(){
-        this.left=this.$route.query.username
-        for(var i in this.allMsg){
-            for(var j in this.allMsg[i].msg){
-                this.allMsg[i].msg[j].hisImg=this.$route.query.img
+        this.targetId=this.$route.query.targetId
+        console.log("123123"+this.targetId)
+        this.getUser()
+        this.ti = setInterval(this.request,1000)
+    },
+    watch: {
+        text(n,o){
+            if(n==""){
+                this.flag=false
+            }else{
+                this.flag=true
             }
         }
     }

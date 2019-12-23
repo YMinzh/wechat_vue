@@ -1,5 +1,8 @@
 <template>
-    <div class="main">
+    <div class="main" id="chatRecord">
+        <div>
+            <div style="text-align: center;margin: 0 auto;padding-top: 3px;color: #888888;" @click="record">查看聊天记录</div>
+        </div>
         <div v-for="(item, index) in allMsg" :key="index">
             <div class="time">
                 <span>{{item.time}}</span>
@@ -19,21 +22,31 @@ import ChatList from '@/components/ChatList.vue'
 
 export default {
     props: [
-        "allMsg"
+        "allMsg","targetId"
     ],
     components:{
         ChatList
     },
     mounted(){
-        console.log(this.allMsg)
+    },
+    updated(){
+        // 聊天定位到底部
+        let ele = document.getElementById('chatRecord');
+        ele.scrollTop = ele.scrollHeight;
+    },
+    methods: {
+        record(){
+            this.$emit("clean")
+            this.$router.push({path:"record",query: {sendId: this.targetId}})
+        }
     }
-}
+} 
 </script>
 
 <style lang="scss" scoped>
     @import '../assets/sass/color.scss';
     @import '../assets/sass/function.scss';
-    .main{
+    .main{       
         width: 100%;
         flex-grow: 1;
         overflow: auto;
